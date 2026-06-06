@@ -190,7 +190,7 @@
                         <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-20 translate-x-20"></div>
                         <div class="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-16 -translate-x-12"></div>
                         <div class="relative z-10">
-                            <span class="inline-block bg-white/20 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border border-white/30 mb-4">Asesmen Maharati AI v4.4 • Kurikulum Merdeka</span>
+                            <span class="inline-block bg-white/20 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border border-white/30 mb-4">Asesmen Maharati AI v8.4 • Kurikulum Merdeka</span>
                             <h2 class="text-3xl font-extrabold mb-3 leading-tight">Asesmen Sumatif Berkualitas,<br>Tepat Sasaran & Tanpa Ribet 🎯</h2>
                             <p class="text-blue-100 mb-3 max-w-xl text-sm leading-relaxed">
                                 Guru yang baik bukan hanya mengajar — tetapi juga mengukur dengan tepat.<br>
@@ -629,6 +629,68 @@
                 </div>
             </div>
 
+            <!-- Modal Template CP/TP -->
+            <div id="template-modal" class="fixed inset-0 bg-slate-900/70 z-50 flex items-center justify-center hidden p-4">
+                <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden">
+                    <!-- Header -->
+                    <div class="bg-gradient-to-r from-indigo-600 to-blue-700 p-5 text-white flex justify-between items-center flex-shrink-0">
+                        <h3 class="font-bold text-lg flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                            Pilih Template CP & TP
+                        </h3>
+                        <button onclick="closeTemplateModal()" class="text-white/70 hover:text-white transition-colors">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
+                    
+                    <!-- Body -->
+                    <div class="p-5 overflow-y-auto flex-1 space-y-5 bg-slate-50">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-1">Mata Pelajaran</label>
+                                <select id="tmpl-mapel" onchange="onTemplateMapelChange()" class="w-full p-2.5 border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-sm text-sm">
+                                    <option value="">-- Memuat --</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-1">Fase / Jenjang</label>
+                                <select id="tmpl-fase" onchange="onTemplateFaseChange()" class="w-full p-2.5 border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-sm text-sm">
+                                    <option value="">-- Pilih Mapel Dulu --</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div id="tmpl-cp-container" class="hidden space-y-2">
+                            <label class="block text-sm font-bold text-slate-700">Capaian Pembelajaran (CP)</label>
+                            <textarea id="tmpl-cp-text" rows="3" class="w-full p-3 border border-slate-300 rounded-lg outline-none bg-white shadow-sm text-sm text-slate-600" readonly></textarea>
+                        </div>
+
+                        <div id="tmpl-tp-type-container" class="hidden pt-2 border-t border-slate-200">
+                            <div class="flex justify-between items-center mb-3">
+                                <label class="block text-sm font-bold text-slate-700">Daftar Bab & Tujuan Pembelajaran</label>
+                                <div class="flex rounded-lg overflow-hidden border border-slate-300 shadow-sm">
+                                    <button id="btn-tp-buku" onclick="setTPType('buku')" class="px-3 py-1.5 text-xs font-bold bg-indigo-600 text-white transition-colors">Buku Teks</button>
+                                    <button id="btn-tp-inspirasi" onclick="setTPType('inspirasi')" class="px-3 py-1.5 text-xs font-bold bg-white text-slate-600 border-l border-slate-200 transition-colors">Inspirasi AI</button>
+                                </div>
+                            </div>
+                            <p id="tmpl-tp-fallback-note" class="text-xs text-amber-600 bg-amber-50 p-2 rounded border border-amber-200 mb-3 hidden">Catatan: Beberapa bab belum memiliki TP Inspirasi, menggunakan TP Buku sebagai alternatif.</p>
+                        </div>
+
+                        <div id="tmpl-bab-container" class="hidden">
+                            <div id="tmpl-bab-list" class="space-y-2 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
+                                <!-- Checkboxes -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="p-4 border-t border-slate-200 bg-white flex justify-end gap-3 flex-shrink-0">
+                        <button onclick="closeTemplateModal()" class="px-4 py-2 border border-slate-300 text-slate-700 font-bold rounded-xl text-sm hover:bg-slate-50 transition-all">Batal</button>
+                        <button id="tmpl-apply-btn" onclick="applyTemplate()" class="px-6 py-2 bg-blue-600 text-white font-bold rounded-xl text-sm hover:bg-blue-700 transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed" disabled>Gunakan Template</button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Modal Donor Gate -->
             <div id="donor-gate-modal" class="fixed inset-0 bg-slate-900/70 z-50 flex items-center justify-center hidden p-4">
                 <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
@@ -646,7 +708,7 @@
                         <div class="bg-amber-50/50 border border-amber-200 rounded-xl p-5 text-center shadow-sm">
                             <p class="text-sm text-amber-800 font-semibold mb-4">Donasikan secara sukarela, lalu kirim bukti ke WhatsApp pengembang untuk mendapat <strong>Kode Donasi</strong>.</p>
                             <div class="flex flex-col gap-3">
-                                <a href="https://gufronfirmansyah-design.github.io/traktir-kopi/" target="_blank" class="w-full py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bold rounded-xl text-sm transition-all shadow-md flex justify-center items-center gap-2">
+                                <a href="https://traktir-kopi.netlify.app/" target="_blank" class="w-full py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bold rounded-xl text-sm transition-all shadow-md flex justify-center items-center gap-2">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                     Traktir Kopi Pengembang
                                 </a>
@@ -973,16 +1035,28 @@ function toggleSection(id) {
 // TEMPLATE CP & TP INSPIRASI
 // =====================================================
 async function openTemplateModal() {
-    if (!currentUser || currentUser.level !== 'Sahabat Maharati') { showDonorGateModal(); return; }
+    if (!currentUser || (currentUser.level !== 'Sahabat Maharati' && currentUser.level !== 'Admin')) { showDonorGateModal(); return; }
+    
     document.getElementById('template-modal').classList.remove('hidden');
+    
     if (!window.templateData) {
-        const res = await callGASBackend('get_templates', {});
-        if (res.status === 'success') {
-            window.templateData = { templates: res.templates, babs: res.babs };
-            const mapelSet = [...new Set(res.templates.map(t => t.mapel))];
-            document.getElementById('tmpl-mapel').innerHTML = '<option value="">-- Pilih Mapel --</option>' + mapelSet.map(m => `<option value="${m}">${m}</option>`).join('');
+        showLoading(true, 'Memuat Data Kurikulum', 'Mengambil database template CP & TP...');
+        try {
+            const res = await callGASBackend('get_templates', {});
+            if (res.status === 'success') {
+                window.templateData = { templates: res.templates, babs: res.babs };
+                const mapelSet = [...new Set(res.templates.map(t => t.mapel))];
+                document.getElementById('tmpl-mapel').innerHTML = '<option value="">-- Pilih Mapel --</option>' + mapelSet.map(m => `<option value="${m}">${m}</option>`).join('');
+            } else {
+                showToast('Gagal memuat template: ' + res.message, 'error');
+            }
+        } catch (e) {
+            showToast('Gagal terhubung ke database template.', 'error');
+        } finally {
+            showLoading(false);
         }
     }
+    
     document.getElementById('tmpl-fase').innerHTML = '<option value="">-- Pilih Fase --</option>';
     document.getElementById('tmpl-cp-container').classList.add('hidden');
     document.getElementById('tmpl-bab-container').classList.add('hidden');
@@ -1081,7 +1155,7 @@ function buildPrompt1(d) {
         return `Tahap 1 - Blueprint\nPENTING: Langsung tulis dokumen blueprint tanpa kalimat pembuka atau penutup. Jangan awali dengan "Baik,", "Tentu,", "Berikut adalah...", atau kalimat serupa. Output adalah dokumen profesional siap pakai.\n\nAnda adalah ahli asesmen pendidikan dan perancang evaluasi pembelajaran Kurikulum Merdeka.\n\n==================================================\nIDENTITAS ASESMEN\n==================================================\n- Mata pelajaran: ${d.mapel}\n- Jenjang: ${d.jenjang}\n- Kelas/Semester: ${d.kelas} (Fase ${d.fase})\n- Bab Materi: \n${d.babGabung}\n- Jenis asesmen: ${d.tujuan} (${d.jenisAsesmen})${konteksString}\n\n==================================================\nCAPAIAN PEMBELAJARAN (CP)\n==================================================\n${d.cp}\n\nTABEL 2 (Kisi-kisi Kinerja):\n| Elemen CP | TP | Indikator Kinerja (sertakan konteks ${d.lokasi || 'nasional'}) | Materi | Kriteria Keberhasilan |`;
     }
 
-    return `Tahap 1 -Blueprint
+    return `Tahap 1 - Blueprint
 PENTING: Langsung tulis dokumen blueprint tanpa kalimat pembuka atau penutup. Jangan awali dengan "Baik,", "Tentu,", "Berikut adalah...", atau kalimat serupa. Output adalah dokumen profesional siap pakai.
 Anda adalah ahli asesmen pendidikan dan perancang evaluasi pembelajaran Kurikulum Merdeka dengan pendekatan pembelajaran mendalam.
 Tugas Anda adalah menyusun blueprint/kisi-kisi asesmen sumatif yang valid, proporsional, kontekstual, dan benar-benar mengukur ketercapaian Capaian Pembelajaran (CP), diturunkan ke TP, lalu ke indikator.
@@ -1193,7 +1267,7 @@ ATURAN STIMULUS
 ==================================================
 PRINSIP UTAMA:
 - Stimulus harus menjadi alat berpikir peserta didik.
-- Peserta didik TIDAK BOLEH menjawab soal hanya dengan mengingat   materi tanpa membaca stimulus.
+- Peserta didik TIDAK BOLEH menjawab soal hanya dengan mengingat materi tanpa membaca stimulus.
 Distribusi stimulus ideal:
 - Berita/artikel aktual (parafrase) : ±30%
 - Teks informasi/bacaan             : ±20%
