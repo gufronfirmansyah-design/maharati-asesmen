@@ -190,7 +190,7 @@
                         <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-20 translate-x-20"></div>
                         <div class="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-16 -translate-x-12"></div>
                         <div class="relative z-10">
-                            <span class="inline-block bg-white/20 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border border-white/30 mb-4">Asesmen Maharati AI v3.4 • Kurikulum Merdeka</span>
+                            <span class="inline-block bg-white/20 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border border-white/30 mb-4">Asesmen Maharati AI v3.5 • Kurikulum Merdeka</span>
                             <h2 class="text-3xl font-extrabold mb-3 leading-tight">Asesmen Sumatif Berkualitas,<br>Tepat Sasaran & Tanpa Ribet 🎯</h2>
                             <p class="text-blue-100 mb-3 max-w-xl text-sm leading-relaxed">
                                 Guru yang baik bukan hanya mengajar — tetapi juga mengukur dengan tepat.<br>
@@ -1157,7 +1157,7 @@ function buildPrompt1(d) {
     const konteksString = d.lokasi ? `\n- Konteks lokal: ${d.lokasi}` : '';
 
     if (isNonTest) {
-        return `Tahap 1 - Blueprint\nPENTING: Langsung tulis dokumen blueprint tanpa kalimat pembuka atau penutup. Jangan awali dengan "Baik,", "Tentu,", "Berikut adalah...", atau kalimat serupa. Output adalah dokumen profesional siap pakai.\n\nAnda adalah ahli asesmen pendidikan dan perancang evaluasi pembelajaran Kurikulum Merdeka.\n\n==================================================\nIDENTITAS ASESMEN\n==================================================\n- Mata pelajaran: ${d.mapel}\n- Jenjang: ${d.jenjang}\n- Kelas/Semester: ${d.kelas} (Fase ${d.fase})\n- Bab Materi: \n${d.babGabung}\n- Jenis asesmen: ${d.tujuan} (${d.jenisAsesmen})${konteksString}\n\n==================================================\nCAPAIAN PEMBELAJARAN (CP)\n==================================================\n${d.cp}\n\nTABEL 2 (Kisi-kisi Kinerja):\n| Elemen CP | TP | Indikator Kinerja (sertakan konteks ${d.lokasi || 'nasional'}) | Materi | Kriteria Keberhasilan |`;
+        return `Tahap 1 - Blueprint\nPENTING: Langsung tulis dokumen blueprint tanpa kalimat pembuka atau penutup. Jangan awali dengan "Baik,", "Tentu,", "Berikut adalah...", atau kalimat serupa. Output adalah dokumen profesional siap pakai.\n\nAnda adalah ahli asesmen pendidikan dan perancang evaluasi pembelajaran Kurikulum Merdeka.\n\n==================================================\nIDENTITAS ASESMEN\n==================================================\n- Mata pelajaran: ${d.mapel}\n- Jenjang: ${d.jenjang}\n- Kelas/Semester: ${d.kelas} (Fase ${d.fase})\n- Bab Materi: \n${d.babGabung}\n- Jenis asesmen: ${d.tujuan} (${d.jenisAsesmen})${konteksString}\n\n==================================================\nCAPAIAN PEMBELAJARAN (CP)\n==================================================\n${d.cp}\n\nTABEL 2 (Matriks Kisi-kisi Kinerja):\n\n| Elemen CP | TP | Indikator Kinerja (sertakan konteks ${d.lokasi || 'nasional'}) | Materi | Kriteria Keberhasilan |\n|---|---|---|---|---|`;
     }
 
     return `Tahap 1 - Blueprint
@@ -1213,13 +1213,40 @@ ATURAN KUALITAS
 TUGAS
 ==================================================
 Buat Blueprint dengan struktur:
-TABEL 1: CP dan TP lengkap.
+A. TABEL 1: CP dan TP lengkap.
+ADA KOLOM CAPAIAN PEMBELAJARAN (ditulis lengkap) DAN KOLOM TUJUAN PEMBELAJARAN (ditulis lengkap)
+
+B. TABEL 2 (Matriks Kisi-kisi):
 ⚠️ URUTAN SOAL WAJIB: Soal Pilihan Ganda DULU (nomor 1 hingga selesai), baru soal Uraian di nomor AKHIR. DILARANG menyisipkan Uraian di tengah soal PG.
-TABEL 2 (Matriks Kisi-kisi):
-| No | Bentuk Soal | Elemen CP | TP | Indikator Soal (konteks ${d.lokasi || 'Indonesia'}) | Materi | Bloom/DoK | Stimulus |
+Format buat dalam bentuk table dengan kolom:
+
+| No soal | Bentuk Soal | Elemen CP | TP yang diukur (TP1, TP2, DST) | Indikator Soal | Materi | Level Bloom/DoK | Jenis Stimulus |
 |---|---|---|---|---|---|---|---|
-Tampilkan rekap:
-Tabel Distribusi (Target vs Aktual) untuk LOTS, MOTS, HOTS, Stimulus, Literasi, Numerasi.`;
+
+Keterangan kolom:
+- CP : tulis CP1 atau CP2 misalnya
+- TP : tulis TP1 s/d TP8 misalnya
+- Indikator: sertakan konteks di sini secara natural
+- Bloom/DoK: tulis ringkas, contoh: C2/DoK1
+- Stimulus : tulis 'Teks(Lit)' / 'Data(Num)' / 'Gambar' / 'Kasus' / '-'
+
+C. Tampilkan rekap:
+1. Tabel Distribusi (Target vs Aktual) untuk LOTS, MOTS, HOTS, Stimulus, Literasi, Numerasi.
+2. tabel soal per TP: Dengan kolom | TP | Jumlah | Bentuk Soal |
+
+Sebelum menampilkan hasil akhir:
+- cek distribusi Bloom
+- cek distribusi DoK
+- cek pemerataan TP
+- cek proporsi stimulus
+- cek proporsi Literasi dan numerasi
+- cek apakah soal benar-benar mengarah pada ketercapaian CP
+
+CEK SEBELUM SELESAI
+✓ Setiap baris bisa ditelusuri ke elemen CP yang benar?
+✓ Indikator soal benar-benar turunan TP, bukan loncat dari CP?
+✓ Distribusi sesuai spesifikasi?
+✓ Konteks Lokal terintegrasi natural, bukan tempelan?`;
 }
 
 function buildPrompt2(d) {
@@ -1436,7 +1463,18 @@ async function generateWizardStep1() {
 async function generateWizardStep2() {
     if (!cachedBlueprintResultText) return;
     const d = getFormData();
-    const prompt = `Gunakan Blueprint ini sebagai pedoman tunggal:\n\n${cachedBlueprintResultText}\n\nPerintah:\n${buildPrompt2(d)}`;
+    
+    // Perbaikan: Isolasi Blueprint di dalam tag <blueprint> agar AI fokus pada Perintah Utama
+    const prompt = `Berikut adalah Blueprint/Kisi-kisi yang telah disusun. Gunakan ini sebagai pedoman tunggal pembuatan soal:
+
+<blueprint_referensi>
+${cachedBlueprintResultText}
+</blueprint_referensi>
+
+===========================================
+PERINTAH UTAMA UNTUK ANDA:
+===========================================
+${buildPrompt2(d)}`;
     
     showLoading(true, 'Menulis Soal dan Pembahasan', 'AI sedang merangkai butir soal berdasarkan blueprint...');
     runLoadingProgress(35000);
