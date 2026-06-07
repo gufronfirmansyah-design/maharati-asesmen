@@ -193,7 +193,7 @@
                         <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-20 translate-x-20"></div>
                         <div class="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-16 -translate-x-12"></div>
                         <div class="relative z-10">
-                            <span class="inline-block bg-white/20 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border border-white/30 mb-4">Asesmen Maharati AI v4.5 • Kurikulum Merdeka</span>
+                            <span class="inline-block bg-white/20 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border border-white/30 mb-4">Asesmen Maharati AI v5.5 • Kurikulum Merdeka</span>
                             <h2 class="text-3xl font-extrabold mb-3 leading-tight">Asesmen Sumatif Berkualitas,<br>Tepat Sasaran & Tanpa Ribet 🎯</h2>
                             <p class="text-blue-100 mb-3 max-w-xl text-sm leading-relaxed">
                                 Guru yang baik bukan hanya mengajar — tetapi juga mengukur dengan tepat.<br>
@@ -430,9 +430,12 @@
                     <div class="mb-4">
                         <label class="block text-sm font-bold text-slate-700 mb-2">Pilih Model</label>
                         <select id="f-model" class="w-full p-3 border border-slate-300 rounded-lg outline-none bg-white font-medium">
-                            <option value="gemini-2.5-flash">Google Gemini 2.5 Flash (Cepat & Hemat)</option>
-                            <option value="gemini-2.0-flash">Google Gemini 2.0 Flash</option>
-                            <option value="gemini-2.5-pro">Google Gemini 2.5 Pro (Penalaran Tinggi)</option>
+                            <optgroup label="Google Gemini">
+                                <option value="gemini-2.5-flash">Google Gemini 2.5 Flash (Cepat & Hemat)</option>
+                                <option value="gemini-2.0-flash">Google Gemini 2.0 Flash</option>
+                                <option value="gemini-2.5-pro">Google Gemini 2.5 Pro (Penalaran Tinggi)</option>
+                            </optgroup>
+                            <!-- Optgroup KoboILLM akan dimasukkan ke sini oleh script fetchLiteLLMModels() -->
                         </select>
                     </div>
                     
@@ -773,6 +776,11 @@
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxauMiqbqXj-AmKGDEWpb4FZ1UL5cF83l2oZJ2VP3RI9XnbGHwT2bKZqCAj3b0wj8UUnQ/exec";
 const SYSTEM_KEY_PREF = 'maharati_api_pref';
 const FORM_DRAFT_KEY  = 'maharati_form_draft';
+
+// --- TAMBAHAN UNTUK LITELLM / KOBOILLM ---
+const LITELLM_BASE_URL = "https://api.koboillm.com/v1";
+const LITELLM_API_KEY = "sk-wOunsEGry-9jpYD--YzH7A";
+// ----------------------------------------
 
 // STATE
 let currentUser = null;
@@ -1309,12 +1317,12 @@ PRINSIP UTAMA:
 - Peserta didik TIDAK BOLEH menjawab soal hanya dengan mengingat materi tanpa membaca stimulus.
 Distribusi stimulus ideal:
 - Berita/artikel aktual (parafrase) : ±30%
-- Teks informasi/bacaan             : ±20%
-- Studi kasus                       : ±15%
-- Tabel data                        : ±10%
-- Grafik/diagram                    : ±10%
-- Gambar analitis                   : ±10%
-- Infografis                        : ±5%
+- Teks informasi/bacaan              : ±20%
+- Studi kasus                        : ±15%
+- Tabel data                         : ±10%
+- Grafik/diagram                     : ±10%
+- Gambar analitis                    : ±10%
+- Infografis                         : ±5%
 LARANGAN KERAS:
 DILARANG mengarang: berita, statistik, hasil survei, hasil penelitian, kutipan tokoh, data pemerintah, data BPS, data ekonomi — jika tidak ada sumber yang jelas.
 Format GRAFIK (placeholder visual):
@@ -1508,7 +1516,61 @@ ${buildPrompt2(d)}`;
     }
 }
 
+// --- FUNGSI AMBIL MODEL KOBOILLM / LITELLM ---
+async function fetchLiteLLMModels() {
+    try {
+        const res = await fetch(`${LITELLM_BASE_URL}/models`, {
+            headers: {
+                'Authorization': `Bearer ${LITELLM_API_KEY}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        const body = await res.json();
+        const models = (body.data || []).sort((a,b) => a.id.localeCompare(b.id));
+
+        const select = document.getElementById('f-model');
+        const optgroup = document.createElement('optgroup');
+        optgroup.label = "KoboILLM (LiteLLM)";
+
+        const isMember = currentUser && (currentUser.level === 'Sahabat Maharati' || currentUser.level === 'Admin');
+
+        models.forEach(m => {
+            const option = document.createElement('option');
+            option.value = `litellm|${m.id}`; // Penanda khusus agar mudah diproses
+            option.textContent = isMember ? m.id : `🔒 ${m.id} (Member)`;
+            if (!isMember) {
+                option.disabled = true;
+            }
+            optgroup.appendChild(option);
+        });
+
+        select.appendChild(optgroup);
+    } catch(e) {
+        console.error("Gagal load KoboILLM models:", e);
+    }
+}
+
 async function callGeminiAPI(model, key, prompt) {
+    // --- TAMBAHAN UNTUK ROUTING KE KOBOILLM / LITELLM ---
+    if (model.startsWith('litellm|')) {
+        const actualModel = model.split('|')[1];
+        const res = await fetch(`${LITELLM_BASE_URL}/chat/completions`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${LITELLM_API_KEY}`
+            },
+            body: JSON.stringify({
+                model: actualModel,
+                messages: [{ role: 'user', content: prompt }]
+            })
+        });
+        const data = await res.json();
+        if(!res.ok) throw new Error(data.error?.message || 'Token/Model KoboILLM tidak valid.');
+        return data.choices[0].message.content;
+    }
+    // ----------------------------------------------------
+
     if (key && key.trim() !== '') {
         const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`, {
             method: 'POST', headers: {'Content-Type':'application/json'},
@@ -1852,6 +1914,28 @@ function updateApiLevelInfo() {
         }
     });
 
+    // --- LOCK/UNLOCK MODEL LITELLM ---
+    const modelSelect = document.getElementById('f-model');
+    if (modelSelect) {
+        Array.from(modelSelect.options).forEach(opt => {
+            if (opt.value.startsWith('litellm|')) {
+                const originalName = opt.value.split('|')[1];
+                if (isMember) {
+                    opt.disabled = false;
+                    opt.textContent = originalName;
+                } else {
+                    opt.disabled = true;
+                    opt.textContent = `🔒 ${originalName} (Member)`;
+                }
+            }
+        });
+        // Kembalikan ke model default (Gemini Flash) jika user logout dan opsi LiteLLM sedang terpilih
+        if (modelSelect.options[modelSelect.selectedIndex]?.disabled) {
+            modelSelect.value = 'gemini-2.5-flash';
+        }
+    }
+    // ---------------------------------
+
     const sysPref = localStorage.getItem(SYSTEM_KEY_PREF) || 'key1';
     const radioEl = document.querySelector(`input[name="api-choice"][value="${sysPref}"]`);
     if (radioEl && !radioEl.disabled) radioEl.checked = true;
@@ -2031,6 +2115,7 @@ window.onload = () => {
     if(sUser) { currentUser = JSON.parse(sUser); fetchHistoryData(); }
     updateAuthUI(); toggleSpesifikasiSoal();
     checkApiKey();
+    fetchLiteLLMModels(); // <--- Fungsi memuat model KoboILLM
 };
 </script>
 </body>
