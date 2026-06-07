@@ -193,7 +193,7 @@
                         <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-20 translate-x-20"></div>
                         <div class="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-16 -translate-x-12"></div>
                         <div class="relative z-10">
-                            <span class="inline-block bg-white/20 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border border-white/30 mb-4">Asesmen Maharati AI v4.5 • Kurikulum Merdeka</span>
+                            <span class="inline-block bg-white/20 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border border-white/30 mb-4">Asesmen Maharati AI v3.5 • Kurikulum Merdeka</span>
                             <h2 class="text-3xl font-extrabold mb-3 leading-tight">Asesmen Sumatif Berkualitas,<br>Tepat Sasaran & Tanpa Ribet 🎯</h2>
                             <p class="text-blue-100 mb-3 max-w-xl text-sm leading-relaxed">
                                 Guru yang baik bukan hanya mengajar — tetapi juga mengukur dengan tepat.<br>
@@ -292,12 +292,21 @@
                                 <div><label class="block text-sm font-medium text-slate-700 mb-1">Nama Guru</label><input type="text" id="f-nama" placeholder="Gufron Firmansyah, S.Pd." class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"></div>
                                 <div><label class="block text-sm font-medium text-slate-700 mb-1">Asal Sekolah</label><input type="text" id="f-sekolah" placeholder="SMK Negeri 2 Mantangai" class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"></div>
                                 <!-- Konteks Lokal Toggle -->
-                                <div class="md:col-span-2">
-                                    <label class="block text-sm font-medium text-slate-700 mb-1">Gunakan Konteks Lokal Sekolah?</label>
-                                    <select id="f-use-lokasi" onchange="toggleKonteksLokal()" class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white transition-all">
-                                        <option value="no">Tidak Perlu</option>
-                                        <option value="yes">Ya, Sesuaikan Konteks Lokal</option>
-                                    </select>
+                                <div class="md:col-span-2 grid md:grid-cols-2 gap-4 mt-2">
+                                    <div>
+                                        <label class="block text-sm font-medium text-slate-700 mb-1">Konteks Lokal Sekolah?</label>
+                                        <select id="f-use-lokasi" onchange="toggleKonteksLokal()" class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white transition-all">
+                                            <option value="no">Tidak Perlu</option>
+                                            <option value="yes">Ya, Sesuaikan</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-slate-700 mb-1">Literasi & Numerasi?</label>
+                                        <select id="f-use-litnum" class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white transition-all">
+                                            <option value="no">Tidak Perlu</option>
+                                            <option value="yes">Ya, Integrasikan</option>
+                                        </select>
+                                    </div>
                                 </div>
                                 <div id="container-lokasi" class="md:col-span-2 hidden bg-blue-50 p-4 rounded-lg border border-blue-100">
                                     <label class="block text-sm font-medium text-blue-800 mb-1">Jelaskan Lingkungan Lokal Sekolah</label>
@@ -360,37 +369,53 @@
                         <div id="sec-evaluasi" class="section-body px-6 pb-6">
                             <div class="grid md:grid-cols-2 gap-4">
                                 <div class="md:col-span-2">
-                                    <label class="block text-sm font-medium text-slate-700 mb-1">Jenis Asesmen</label>
-                                    <select id="f-jenis-asesmen" onchange="toggleSpesifikasiSoal()" class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-blue-50 font-semibold text-blue-900 transition-all">
-                                        <optgroup label="Teknik Tes">
-                                            <option value="Campuran (PG & Uraian)">Campuran (PG & Uraian)</option>
-                                            <option value="Pilihan Ganda">Pilihan Ganda</option>
-                                            <option value="Pilihan Ganda Kompleks">Pilihan Ganda Kompleks</option>
-                                            <option value="Menjodohkan">Menjodohkan</option>
-                                            <option value="Benar/Salah">Benar/Salah</option>
-                                            <option value="Isian Singkat">Isian Singkat</option>
-                                            <option value="Uraian">Uraian</option>
-                                        </optgroup>
-                                        <optgroup label="Teknik Non-Tes">
-                                            <option value="Projek">Projek (Project-Based Assessment)</option>
-                                            <option value="Praktik">Praktik (Unjuk Kerja)</option>
-                                            <option value="Produk">Produk</option>
-                                            <option value="Portofolio">Portofolio</option>
-                                        </optgroup>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Kategori Asesmen</label>
+                                    <select id="f-kategori-asesmen" onchange="toggleSpesifikasiSoal()" class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-blue-50 font-semibold text-blue-900 transition-all">
+                                        <option value="Tes Tertulis">Tes Tertulis (PG, Uraian, dll)</option>
+                                        <option value="Non-Tes">Non-Tes (Projek, Praktik, dll)</option>
                                     </select>
                                 </div>
-                                <div><label class="block text-sm font-medium text-slate-700 mb-1">Waktu (Menit)</label><input type="number" id="f-waktu" value="90" class="w-full p-2.5 border border-slate-300 rounded-lg outline-none" required></div>
-                                <div id="spesifikasi-soal" class="md:col-span-2 grid md:grid-cols-2 gap-4 mt-2">
-                                    <div><label class="block text-sm font-medium text-slate-700 mb-1">Total Soal</label><input type="number" id="f-jumlah" value="40" class="w-full p-2.5 border border-slate-300 rounded-lg outline-none"></div>
-                                    <div><label class="block text-sm font-medium text-slate-700 mb-1">Komposisi</label><input type="text" id="f-komposisi" value="35 Pilihan Ganda, 5 Uraian" class="w-full p-2.5 border border-slate-300 rounded-lg outline-none"></div>
-                                    <div class="md:col-span-2">
-                                        <label class="block text-sm font-medium text-slate-700 mb-1">Distribusi Level Kognitif</label>
-                                        <select id="f-distribusi" class="w-full p-2.5 border border-slate-300 rounded-lg outline-none bg-white">
-                                            <option value="Seimbang (30%LOTS/C1-C2, 50% MOTS/C3-C4, dan 20%HOTS/C5-C6)">Seimbang (30% LOTS, 50% MOTS, 20% HOTS)</option>
-                                            <option value="Dominan Dasar (50%LOTS/C1-C2, 35% MOTS/C3-C4, dan 15%HOTS/C5-C6)">Dominan Dasar (50% LOTS, 35% MOTS, 15% HOTS)</option>
-                                            <option value="Dominan HOTS (20%LOTS/C1-C2, 40% MOTS/C3-C4, dan 40%HOTS/C5-C6)">Dominan HOTS (20% LOTS, 40% MOTS, 40% HOTS)</option>
-                                            <option value="Dasar (60%LOTS/C1-C2, 30% MOTS/C3-C4, dan 10%HOTS/C5-C6)">Dasar (60% LOTS, 30% MOTS, 10% HOTS)</option>
+                                
+                                <div id="spesifikasi-non-tes" class="md:col-span-2 hidden">
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Jenis Non-Tes</label>
+                                    <select id="f-jenis-nontes" class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white transition-all">
+                                        <option value="Projek">Projek (Project-Based Assessment)</option>
+                                        <option value="Praktik">Praktik (Unjuk Kerja)</option>
+                                        <option value="Produk">Produk</option>
+                                        <option value="Portofolio">Portofolio</option>
+                                    </select>
+                                </div>
+
+                                <div class="md:col-span-2"><label class="block text-sm font-medium text-slate-700 mb-1">Waktu (Menit)</label><input type="number" id="f-waktu" value="90" class="w-full p-2.5 border border-slate-300 rounded-lg outline-none" required></div>
+                                
+                                <div id="spesifikasi-soal" class="md:col-span-2 bg-slate-50 p-4 border border-slate-200 rounded-xl mt-2 space-y-4">
+                                    <label class="block text-sm font-bold text-slate-800">Komposisi Jumlah Soal</label>
+                                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                        <div><label class="block text-xs font-medium text-slate-600 mb-1">Pilihan Ganda</label><input type="number" id="f-jml-pg" min="0" value="35" class="w-full p-2 border border-slate-300 rounded outline-none" oninput="hitungTotalSoal()"></div>
+                                        <div><label class="block text-xs font-medium text-slate-600 mb-1">PG Kompleks</label><input type="number" id="f-jml-pgk" min="0" value="0" class="w-full p-2 border border-slate-300 rounded outline-none" oninput="hitungTotalSoal()"></div>
+                                        <div><label class="block text-xs font-medium text-slate-600 mb-1">Menjodohkan</label><input type="number" id="f-jml-jodoh" min="0" value="0" class="w-full p-2 border border-slate-300 rounded outline-none" oninput="hitungTotalSoal()"></div>
+                                        <div><label class="block text-xs font-medium text-slate-600 mb-1">Benar/Salah</label><input type="number" id="f-jml-bs" min="0" value="0" class="w-full p-2 border border-slate-300 rounded outline-none" oninput="hitungTotalSoal()"></div>
+                                        <div><label class="block text-xs font-medium text-slate-600 mb-1">Isian Singkat</label><input type="number" id="f-jml-isian" min="0" value="0" class="w-full p-2 border border-slate-300 rounded outline-none" oninput="hitungTotalSoal()"></div>
+                                        <div><label class="block text-xs font-medium text-slate-600 mb-1">Uraian</label><input type="number" id="f-jml-uraian" min="0" value="5" class="w-full p-2 border border-slate-300 rounded outline-none" oninput="hitungTotalSoal()"></div>
+                                    </div>
+                                    <div class="text-right text-sm font-bold text-blue-700">Total: <span id="f-total-soal">40</span> Soal</div>
+
+                                    <hr class="border-slate-200">
+                                    <div class="mt-2">
+                                        <label class="block text-sm font-bold text-slate-800 mb-2">Distribusi Level Kognitif (%)</label>
+                                        <select id="f-dist-preset" onchange="changeDistPreset()" class="w-full p-2.5 border border-slate-300 rounded-lg outline-none bg-white mb-3 text-sm">
+                                            <option value="seimbang" selected>Seimbang (30% LOTS, 50% MOTS, 20% HOTS)</option>
+                                            <option value="dasar">Dasar (50% LOTS, 35% MOTS, 15% HOTS)</option>
+                                            <option value="dukungan">Perlu Dukungan (60% LOTS, 30% MOTS, 10% HOTS)</option>
+                                            <option value="tinggi">Tinggi (20% LOTS, 40% MOTS, 40% HOTS)</option>
+                                            <option value="kustom">Isi Sendiri (Kustom)</option>
                                         </select>
+                                        <div class="grid grid-cols-3 gap-3">
+                                            <div><label class="block text-xs font-medium text-slate-600 mb-1">LOTS (C1-C2)</label><input type="number" id="f-lots" value="30" class="w-full p-2 border border-slate-300 rounded outline-none" oninput="setCustomPreset()"></div>
+                                            <div><label class="block text-xs font-medium text-slate-600 mb-1">MOTS (C3-C4)</label><input type="number" id="f-mots" value="50" class="w-full p-2 border border-slate-300 rounded outline-none" oninput="setCustomPreset()"></div>
+                                            <div><label class="block text-xs font-medium text-slate-600 mb-1">HOTS (C5-C6)</label><input type="number" id="f-hots" value="20" class="w-full p-2 border border-slate-300 rounded outline-none" oninput="setCustomPreset()"></div>
+                                        </div>
+                                        <div id="dist-warning" class="text-xs text-rose-500 font-bold mt-1 hidden">Total harus 100%</div>
                                     </div>
                                 </div>
                             </div>
@@ -923,21 +948,61 @@ function getFormData() {
     const useLokasi = document.getElementById('f-use-lokasi')?.value === 'yes';
     const lokasiStr = useLokasi ? document.getElementById('f-lokasi')?.value.trim() : '';
 
+    const isNonTest = document.getElementById('f-kategori-asesmen')?.value === 'Non-Tes';
+    const jenisAsesmen = isNonTest ? document.getElementById('f-jenis-nontes')?.value : 'Tes Tertulis';
+    
+    const pg = parseInt(document.getElementById('f-jml-pg')?.value || 0);
+    const pgk = parseInt(document.getElementById('f-jml-pgk')?.value || 0);
+    const jodoh = parseInt(document.getElementById('f-jml-jodoh')?.value || 0);
+    const bs = parseInt(document.getElementById('f-jml-bs')?.value || 0);
+    const isian = parseInt(document.getElementById('f-jml-isian')?.value || 0);
+    const uraian = parseInt(document.getElementById('f-jml-uraian')?.value || 0);
+    const totalSoal = pg + pgk + jodoh + bs + isian + uraian;
+    
+    let arrKomposisi = [];
+    if (pg > 0) arrKomposisi.push(`${pg} Pilihan Ganda`);
+    if (pgk > 0) arrKomposisi.push(`${pgk} Pilihan Ganda Kompleks`);
+    if (jodoh > 0) arrKomposisi.push(`${jodoh} Menjodohkan`);
+    if (bs > 0) arrKomposisi.push(`${bs} Benar/Salah`);
+    if (isian > 0) arrKomposisi.push(`${isian} Isian Singkat`);
+    if (uraian > 0) arrKomposisi.push(`${uraian} Uraian`);
+    const komposisi = arrKomposisi.join(', ') || '0 Soal';
+
+    const l = document.getElementById('f-lots')?.value || 0;
+    const m = document.getElementById('f-mots')?.value || 0;
+    const h = document.getElementById('f-hots')?.value || 0;
+    const distribusi = `${l}% LOTS, ${m}% MOTS, ${h}% HOTS`;
+
+    const useLitnum = document.getElementById('f-use-litnum')?.value === 'yes';
+
     return {
         nama: document.getElementById('f-nama')?.value.trim() || '',
         sekolah: document.getElementById('f-sekolah')?.value.trim() || '',
         lokasi: lokasiStr,
+        useLitnum,
         mapel: document.getElementById('f-mapel')?.value.trim() || '',
         tujuan: document.getElementById('f-tujuan')?.value || '',
         jenjang: document.getElementById('f-jenjang')?.value || '',
         kelas: document.getElementById('f-kelas')?.value || '',
         fase: document.getElementById('f-fase')?.value || '',
         cp: document.getElementById('f-cp')?.value.trim() || '',
-        jenisAsesmen: document.getElementById('f-jenis-asesmen')?.value || 'Campuran (PG & Uraian)',
+        kategoriAsesmen: document.getElementById('f-kategori-asesmen')?.value || 'Tes Tertulis',
+        jenisNontes: document.getElementById('f-jenis-nontes')?.value || 'Projek',
+        jenisAsesmen,
         waktu: document.getElementById('f-waktu')?.value || '90',
-        jumlah: document.getElementById('f-jumlah')?.value || '40',
-        komposisi: document.getElementById('f-komposisi')?.value.trim() || '',
-        distribusi: document.getElementById('f-distribusi')?.value || '',
+        jml_pg: pg,
+        jml_pgk: pgk,
+        jml_jodoh: jodoh,
+        jml_bs: bs,
+        jml_isian: isian,
+        jml_uraian: uraian,
+        totalSoal,
+        komposisi,
+        dist_preset: document.getElementById('f-dist-preset')?.value || 'seimbang',
+        lots: l,
+        mots: m,
+        hots: h,
+        distribusi,
         babGabung,
         tpGabung: babs.map(b=>`Bab: ${b.bab}\n${b.tp}`).join('\n\n'),
         lingkupGabung: babs.map(b=>`Bab: ${b.bab}\n${b.lingkup}`).join('\n\n'),
@@ -954,6 +1019,8 @@ function clearFormDraft() {
     addBab();
     toggleSpesifikasiSoal();
     toggleKonteksLokal();
+    hitungTotalSoal();
+    changeDistPreset();
     document.getElementById('draft-save-indicator')?.classList.add('hidden');
     showToast('Draft berhasil dibersihkan', 'success');
 }
@@ -986,20 +1053,25 @@ function restoreFormDraft() {
             'f-nama': d.nama, 'f-sekolah': d.sekolah, 'f-lokasi': d.lokasi,
             'f-mapel': d.mapel, 'f-tujuan': d.tujuan, 'f-jenjang': d.jenjang,
             'f-kelas': d.kelas, 'f-fase': d.fase, 'f-cp': d.cp,
-            'f-jenis-asesmen': d.jenisAsesmen, 'f-waktu': d.waktu,
-            'f-jumlah': d.jumlah, 'f-komposisi': d.komposisi, 'f-distribusi': d.distribusi
+            'f-waktu': d.waktu,
+            'f-kategori-asesmen': d.kategoriAsesmen || 'Tes Tertulis',
+            'f-jenis-nontes': d.jenisNontes || 'Projek',
+            'f-jml-pg': d.jml_pg, 'f-jml-pgk': d.jml_pgk, 'f-jml-jodoh': d.jml_jodoh,
+            'f-jml-bs': d.jml_bs, 'f-jml-isian': d.jml_isian, 'f-jml-uraian': d.jml_uraian,
+            'f-dist-preset': d.dist_preset, 'f-lots': d.lots, 'f-mots': d.mots, 'f-hots': d.hots
         };
         for (let id in map) {
-            if (document.getElementById(id) && map[id]) document.getElementById(id).value = map[id];
+            if (document.getElementById(id) && map[id] !== undefined) document.getElementById(id).value = map[id];
         }
         
         if (d.lokasi) { document.getElementById('f-use-lokasi').value = 'yes'; toggleKonteksLokal(); }
+        if (d.useLitnum) { document.getElementById('f-use-litnum').value = 'yes'; } else { document.getElementById('f-use-litnum').value = 'no'; }
         
         if (d.babs && d.babs.length > 0) {
             document.getElementById('bab-container').innerHTML = ''; babCount = 0;
             d.babs.forEach(b => addBabWithValues(b.bab, b.tp, b.lingkup));
         }
-        toggleSpesifikasiSoal(); autoFillFormFromUser(); return true;
+        toggleSpesifikasiSoal(); autoFillFormFromUser(); hitungTotalSoal(); checkDistTotal(); return true;
     } catch(e) { return false; }
 }
 
@@ -1028,9 +1100,9 @@ function addBabWithValues(bab, tp, lingkup) {
 }
 
 function toggleSpesifikasiSoal() {
-    const jenis = document.getElementById('f-jenis-asesmen')?.value || '';
-    const isNonTest = ['Projek','Praktik','Portofolio','Produk'].includes(jenis);
+    const isNonTest = document.getElementById('f-kategori-asesmen')?.value === 'Non-Tes';
     document.getElementById('spesifikasi-soal')?.classList.toggle('hidden', isNonTest);
+    document.getElementById('spesifikasi-non-tes')?.classList.toggle('hidden', !isNonTest);
 }
 
 function toggleSection(id) {
@@ -1160,11 +1232,12 @@ function applyTemplate() {
 // =====================================================
 
 function buildPrompt1(d) {
-    const isNonTest = ['Praktik', 'Produk', 'Projek', 'Portofolio'].includes(d.jenisAsesmen);
+    const isNonTest = d.kategoriAsesmen === 'Non-Tes';
     const konteksString = d.lokasi ? `\n- Konteks lokal: ${d.lokasi}` : '';
+    const litnumString = d.useLitnum ? `\n- Integrasi Literasi & Numerasi: Ya (minimal 15% Literasi, 15% Numerasi)` : '';
 
     if (isNonTest) {
-        return `Tahap 1 - Blueprint\nPENTING: Langsung tulis dokumen blueprint tanpa kalimat pembuka atau penutup. Jangan awali dengan "Baik,", "Tentu,", "Berikut adalah...", atau kalimat serupa. Output adalah dokumen profesional siap pakai.\n\nAnda adalah ahli asesmen pendidikan dan perancang evaluasi pembelajaran Kurikulum Merdeka.\n\n==================================================\nIDENTITAS ASESMEN\n==================================================\n- Mata pelajaran: ${d.mapel}\n- Jenjang: ${d.jenjang}\n- Kelas/Semester: ${d.kelas} (Fase ${d.fase})\n- Bab Materi: \n${d.babGabung}\n- Jenis asesmen: ${d.tujuan} (${d.jenisAsesmen})${konteksString}\n\n==================================================\nCAPAIAN PEMBELAJARAN (CP)\n==================================================\n${d.cp}\n\nTABEL 2 (Matriks Kisi-kisi Kinerja):\n\n| Elemen CP | TP | Indikator Kinerja (sertakan konteks ${d.lokasi || 'nasional'}) | Materi | Kriteria Keberhasilan |\n|---|---|---|---|---|`;
+        return `Tahap 1 - Blueprint\nPENTING: Langsung tulis dokumen blueprint tanpa kalimat pembuka atau penutup. Jangan awali dengan "Baik,", "Tentu,", "Berikut adalah...", atau kalimat serupa. Output adalah dokumen profesional siap pakai.\n\nAnda adalah ahli asesmen pendidikan dan perancang evaluasi pembelajaran Kurikulum Merdeka.\n\n==================================================\nIDENTITAS ASESMEN\n==================================================\n- Mata pelajaran: ${d.mapel}\n- Jenjang: ${d.jenjang}\n- Kelas/Semester: ${d.kelas} (Fase ${d.fase})\n- Bab Materi: \n${d.babGabung}\n- Jenis asesmen: ${d.tujuan} (${d.jenisNontes})${konteksString}${litnumString}\n\n==================================================\nCAPAIAN PEMBELAJARAN (CP)\n==================================================\n${d.cp}\n\nTABEL 2 (Matriks Kisi-kisi Kinerja):\n\n| Elemen CP | TP | Indikator Kinerja (sertakan konteks ${d.lokasi || 'nasional'}) | Materi | Kriteria Keberhasilan |\n|---|---|---|---|---|`;
     }
 
     return `Tahap 1 - Blueprint
@@ -1181,8 +1254,9 @@ IDENTITAS ASESMEN
 - Bab Materi: \n${d.babGabung}
 - Jenis asesmen: ${d.tujuan} (${d.jenisAsesmen})
 - Konteks lokal: ${d.lokasi || 'Indonesia'}
+- Integrasi Literasi & Numerasi: ${d.useLitnum ? 'Ya (minimal 15% Literasi, 15% Numerasi)' : 'Tidak diwajibkan'}
 - Waktu: ${d.waktu} Menit
-- Jumlah soal: ${d.jumlah} Soal | Komposisi: ${d.komposisi}
+- Jumlah soal: ${d.totalSoal} Soal | Komposisi: ${d.komposisi}
 ==================================================
 CAPAIAN PEMBELAJARAN (CP)
 ==================================================
@@ -1198,7 +1272,7 @@ ${d.lingkupGabung || 'Sesuai dengan Bab dan TP di atas.'}
 ==================================================
 KETENTUAN ASESMEN
 ==================================================
-Jumlah soal: ${d.jumlah} (${d.komposisi})
+Jumlah soal: ${d.totalSoal} (${d.komposisi})
 Distribusi Bloom: ${d.distribusi}
 Distribusi DoK:
 - DoK 1 = recall dasar
@@ -1215,7 +1289,7 @@ ATURAN KUALITAS
 1. Seluruh asesmen mengukur ketercapaian CP. Hindari hafalan langsung.
 2. Harus menuntut analisis/evaluasi.
 3. Minimal 25% soal menggunakan stimulus (gambar deskripsi, tabel, grafik, teks).
-4. Minimal 15% Literasi, 15% Numerasi.
+${d.useLitnum ? '4. Minimal 15% soal bertipe Literasi, 15% soal bertipe Numerasi.' : ''}
 ==================================================
 TUGAS
 ==================================================
@@ -1224,7 +1298,7 @@ A. TABEL 1: CP dan TP lengkap.
 ADA KOLOM CAPAIAN PEMBELAJARAN (ditulis lengkap) DAN KOLOM TUJUAN PEMBELAJARAN (ditulis lengkap)
 
 B. TABEL 2 (Matriks Kisi-kisi):
-⚠️ URUTAN SOAL WAJIB: Soal Pilihan Ganda DULU (nomor 1 hingga selesai), baru soal Uraian di nomor AKHIR. DILARANG menyisipkan Uraian di tengah soal PG.
+⚠️ URUTAN SOAL WAJIB: Dikelompokkan berdasarkan bentuk soal. Soal Uraian WAJIB di nomor urut paling akhir (jika ada).
 Format buat dalam bentuk table dengan kolom:
 
 | No soal | Bentuk Soal | Elemen CP | TP yang diukur (TP1, TP2, DST) | Indikator Soal | Materi | Level Bloom/DoK | Jenis Stimulus |
@@ -1257,7 +1331,7 @@ CEK SEBELUM SELESAI
 }
 
 function buildPrompt2(d) {
-    const isNonTest = ['Praktik', 'Produk', 'Projek', 'Portofolio'].includes(d.jenisAsesmen);
+    const isNonTest = d.kategoriAsesmen === 'Non-Tes';
     if (isNonTest) return `Tahap 2 -Produk Asesmen\nPENTING: Langsung tulis dokumen asesmen tanpa kalimat pembuka atau penutup. Jangan awali dengan "Baik,", "Tentu,", "Berikut adalah...", atau sejenisnya. Output adalah dokumen profesional siap pakai.\n\nBerdasarkan blueprint asesmen kinerja/projek yang telah kamu buat sebelumnya, buat dokumen asesmen lengkap secara berurutan.\n\n==================================================\nFORMAT OUTPUT\n==================================================\nBAGIAN A — INSTRUMEN TUGAS\n- Header Identitas.\n- Deskripsi Tugas / Skenario Projek.\n- Langkah-langkah pelaksanaan untuk siswa.\n- Ketentuan pengumpulan.\n\nBAGIAN B — RUBRIK PENILAIAN\nSajikan tabel rubrik penilaian dengan kriteria yang jelas (Skala 1-4 atau Kurang-Sangat Baik). WAJIB buat tabel dalam format standar Markdown Table (menggunakan pemisah |---|).\nSertakan panduan konversi nilai akhir.`;
 
     const kls = parseInt(d.kelas) || 10;
@@ -1270,18 +1344,13 @@ function buildPrompt2(d) {
         pilihanJawaban = 'A–E (5 pilihan, karena SMA/SMK)';
     }
 
-    const komposisi = d.komposisi || '';
-    const uraianMatch = komposisi.match(/(\d+)\s*[Uu]raian/i);
-    const jumlahUraian = uraianMatch ? parseInt(uraianMatch[1]) : 0;
-    const jumlahTotal = parseInt(d.jumlah) || 40;
-    const nomorMulaiUraian = jumlahTotal - jumlahUraian + 1;
-    const nomorPGAkhir = nomorMulaiUraian > 1 ? nomorMulaiUraian - 1 : jumlahTotal;
+    let uraianMsg = d.jml_uraian > 0 ? `Soal Uraian diletakkan di bagian akhir (sebanyak ${d.jml_uraian} soal).` : '';
 
     return `Tahap 2 - Naskah Soal
 PENTING: Langsung tulis naskah soal tanpa kalimat pembuka atau penutup. Jangan awali dengan "Baik,", "Tentu,", "Berikut adalah...", atau sejenisnya. Output adalah dokumen profesional siap pakai.
 Berdasarkan blueprint/kisi-kisi asesmen yang telah dibuat sebelumnya, buat paket soal lengkap dalam 2 bagian berurutan.
 ⚠️ KERJAKAN BERURUTAN: Selesaikan Bagian A dulu, baru Bagian B. Jangan berhenti sebelum keduanya selesai.
-⚠️ URUTAN SOAL WAJIB: Soal Pilihan Ganda dikerjakan LEBIH DULU (nomor 1 s.d. ${nomorPGAkhir}), baru soal Uraian di nomor AKHIR (nomor ${nomorMulaiUraian} s.d. ${jumlahTotal}).
+⚠️ URUTAN SOAL WAJIB: Dikelompokkan sesuai bentuk soal. ${uraianMsg}
 ==================================================
 ATURAN UMUM
 ==================================================
@@ -1291,7 +1360,7 @@ ATURAN UMUM
 4. Hindari hafalan langsung.
 5. Gunakan bahasa yang jelas, natural, dan tidak ambigu.
 6. Setiap soal hanya memiliki satu jawaban benar.
-7. Pilihan jawaban: ${pilihanJawaban}
+7. Pilihan jawaban (untuk PG): ${pilihanJawaban}
 8. Pilihan Jawaban homogen, panjang seimbang.
 ==================================================
 ATURAN DISTRAKTOR
@@ -1309,12 +1378,12 @@ PRINSIP UTAMA:
 - Peserta didik TIDAK BOLEH menjawab soal hanya dengan mengingat materi tanpa membaca stimulus.
 Distribusi stimulus ideal:
 - Berita/artikel aktual (parafrase) : ±30%
-- Teks informasi/bacaan             : ±20%
-- Studi kasus                       : ±15%
-- Tabel data                        : ±10%
-- Grafik/diagram                    : ±10%
-- Gambar analitis                   : ±10%
-- Infografis                        : ±5%
+- Teks informasi/bacaan              : ±20%
+- Studi kasus                        : ±15%
+- Tabel data                         : ±10%
+- Grafik/diagram                     : ±10%
+- Gambar analitis                    : ±10%
+- Infografis                         : ±5%
 LARANGAN KERAS:
 DILARANG mengarang: berita, statistik, hasil survei, hasil penelitian, kutipan tokoh, data pemerintah, data BPS, data ekonomi — jika tidak ada sumber yang jelas.
 Format GRAFIK (placeholder visual):
@@ -1336,7 +1405,7 @@ FORMAT OUTPUT
 BAGIAN A — SOAL ASESMEN (TANPA KUNCI)
 - Header: nama sekolah, mata pelajaran, kelas, waktu
 - Petunjuk umum mengerjakan
-- Semua soal: Pilihan Ganda dulu → Uraian di nomor akhir
+- Semua soal dikelompokkan berdasarkan jenisnya (PG, Uraian, dll).
 Format setiap soal PG:
 No. [X]
 [Stimulus jika ada]
@@ -1373,7 +1442,7 @@ ATURAN PEMBAHASAN:
 CEK SEBELUM SELESAI
 ==================================================
 Bagian A:
-✓ Urutan soal: PG dulu, Uraian di nomor akhir?
+✓ Urutan soal: Dikelompokkan sesuai jenis?
 ✓ Jumlah soal sesuai komposisi blueprint?
 ✓ Semua opsi homogen dan panjang seimbang?
 ✓ Stimulus relevan dan membantu penalaran?
@@ -1692,6 +1761,26 @@ function validateFormBeforeGenerate() {
         showToast('Isi Mapel, CP, dan minimal 1 Bab.', 'error');
         return false;
     }
+    
+    const isNonTest = document.getElementById('f-kategori-asesmen')?.value === 'Non-Tes';
+    if (!isNonTest) {
+        const l = parseInt(document.getElementById('f-lots').value || 0);
+        const m = parseInt(document.getElementById('f-mots').value || 0);
+        const h = parseInt(document.getElementById('f-hots').value || 0);
+        if (l + m + h !== 100) {
+            showToast('Total Distribusi Level Kognitif harus 100%!', 'error');
+            return false;
+        }
+        
+        const ids = ['f-jml-pg', 'f-jml-pgk', 'f-jml-jodoh', 'f-jml-bs', 'f-jml-isian', 'f-jml-uraian'];
+        let total = 0;
+        ids.forEach(id => total += parseInt(document.getElementById(id)?.value || 0));
+        if (total === 0) {
+            showToast('Total soal tidak boleh 0!', 'error');
+            return false;
+        }
+    }
+    
     return true;
 }
 
@@ -2025,6 +2114,45 @@ function resetToDefaultApiKey() {
     updateApiLevelInfo();
 }
 
+function hitungTotalSoal() {
+    const ids = ['f-jml-pg', 'f-jml-pgk', 'f-jml-jodoh', 'f-jml-bs', 'f-jml-isian', 'f-jml-uraian'];
+    let total = 0;
+    ids.forEach(id => {
+        total += parseInt(document.getElementById(id)?.value || 0);
+    });
+    const el = document.getElementById('f-total-soal');
+    if(el) el.innerText = total;
+}
+
+function changeDistPreset() {
+    const p = document.getElementById('f-dist-preset').value;
+    const l = document.getElementById('f-lots');
+    const m = document.getElementById('f-mots');
+    const h = document.getElementById('f-hots');
+    if (p === 'dasar') { l.value=50; m.value=35; h.value=15; }
+    else if (p === 'dukungan') { l.value=60; m.value=30; h.value=10; }
+    else if (p === 'seimbang') { l.value=30; m.value=50; h.value=20; }
+    else if (p === 'tinggi') { l.value=20; m.value=40; h.value=40; }
+    checkDistTotal();
+}
+
+function setCustomPreset() {
+    document.getElementById('f-dist-preset').value = 'kustom';
+    checkDistTotal();
+}
+
+function checkDistTotal() {
+    const l = parseInt(document.getElementById('f-lots').value || 0);
+    const m = parseInt(document.getElementById('f-mots').value || 0);
+    const h = parseInt(document.getElementById('f-hots').value || 0);
+    const warning = document.getElementById('dist-warning');
+    if (l + m + h !== 100) {
+        warning.classList.remove('hidden');
+    } else {
+        warning.classList.add('hidden');
+    }
+}
+
 // Init
 window.onload = () => {
     const sUser = sessionStorage.getItem('maharati_user');
@@ -2035,4 +2163,3 @@ window.onload = () => {
 </script>
 </body>
 </html>
-
