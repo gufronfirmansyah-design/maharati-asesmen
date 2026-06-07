@@ -7,7 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
         .toast-enter { animation: slideIn 0.3s ease-out forwards; }
@@ -194,7 +193,7 @@
                         <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-20 translate-x-20"></div>
                         <div class="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-16 -translate-x-12"></div>
                         <div class="relative z-10">
-                            <span class="inline-block bg-white/20 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border border-white/30 mb-4">Asesmen Maharati AI v6.5 • Kurikulum Merdeka</span>
+                            <span class="inline-block bg-white/20 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border border-white/30 mb-4">Asesmen Maharati AI v2.5 • Kurikulum Merdeka</span>
                             <h2 class="text-3xl font-extrabold mb-3 leading-tight">Asesmen Sumatif Berkualitas,<br>Tepat Sasaran & Tanpa Ribet 🎯</h2>
                             <p class="text-blue-100 mb-3 max-w-xl text-sm leading-relaxed">
                                 Guru yang baik bukan hanya mengajar — tetapi juga mengukur dengan tepat.<br>
@@ -662,16 +661,6 @@
                 </div>
             </div>
 
-            <!-- VIEW: ADMIN PANEL (Placeholder UI) -->
-            <div id="view-admin" class="hidden max-w-4xl mx-auto space-y-6">
-                <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm text-center">
-                    <div class="w-16 h-16 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl">🛡️</div>
-                    <h2 class="text-2xl font-bold text-slate-800 mb-2">Panel Admin</h2>
-                    <p class="text-slate-500 mb-6">Fitur ini sedang dalam tahap pengembangan Frontend untuk manajemen user dan history secara menyeluruh.</p>
-                    <button onclick="switchView('home')" class="bg-slate-100 text-slate-700 px-6 py-2 rounded-xl font-bold hover:bg-slate-200">Kembali ke Beranda</button>
-                </div>
-            </div>
-
             <!-- Modal Template CP/TP -->
             <div id="template-modal" class="fixed inset-0 bg-slate-900/70 z-50 flex items-center justify-center hidden p-4">
                 <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden">
@@ -771,6 +760,16 @@
                 </div>
             </div>
 
+            <!-- VIEW: ADMIN PANEL (Ditambahkan Placeholder UI) -->
+            <div id="view-admin" class="hidden max-w-4xl mx-auto space-y-6">
+                <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm text-center">
+                    <div class="w-16 h-16 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl">🛡️</div>
+                    <h2 class="text-2xl font-bold text-slate-800 mb-2">Panel Admin</h2>
+                    <p class="text-slate-500 mb-6">Fitur ini sedang dalam tahap pengembangan Frontend untuk manajemen user dan history secara menyeluruh.</p>
+                    <button onclick="switchView('home')" class="bg-slate-100 text-slate-700 px-6 py-2 rounded-xl font-bold hover:bg-slate-200">Kembali ke Beranda</button>
+                </div>
+            </div>
+
             <!-- Loading Bar Persentase -->
             <div id="loading-overlay" class="fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center hidden">
                 <div class="bg-white p-8 rounded-2xl shadow-2xl flex flex-col items-center w-full max-w-sm text-center border border-slate-100">
@@ -801,8 +800,8 @@ const SYSTEM_KEY_PREF = 'maharati_api_pref';
 const FORM_DRAFT_KEY  = 'maharati_form_draft';
 
 // === API KEY FRONTEND (JALUR BROWSER LANGSUNG UNTUK MEMBER) ===
-const FRONTEND_AQ_KEY_4 = ""; // Isi dengan token AQ.xxxx Anda jika ada
-const FRONTEND_AQ_KEY_5 = ""; // Isi dengan token AQ.yyyy Anda jika ada
+const FRONTEND_AQ_KEY_4 = ""; // Isi dengan token khusus Anda (Bisa AQ atau AIza) jika ada
+const FRONTEND_AQ_KEY_5 = ""; // Isi dengan token khusus Anda jika ada
 
 // STATE
 let currentUser = null;
@@ -1509,6 +1508,7 @@ async function generateWizardStep1() {
     showLoading(true, 'Menyusun Kisi-kisi Asesmen', 'AI sedang menganalisis kurikulum. Mohon tunggu...');
     runLoadingProgress(20000); 
     
+    // Perbaikan: Ambil token yang tersimpan
     const apiKey = localStorage.getItem('aq_token') || localStorage.getItem('gemini_api_key') || '';
     const selectedModel = document.getElementById('f-model').value || 'gemini-2.5-flash';
     
@@ -1545,6 +1545,7 @@ async function generateWizardStep2() {
     if (!cachedBlueprintResultText) return;
     const d = getFormData();
     
+    // Perbaikan: Isolasi Blueprint di dalam tag <blueprint> agar AI fokus pada Perintah Utama
     const prompt = `Berikut adalah Blueprint/Kisi-kisi yang telah disusun. Gunakan ini sebagai pedoman tunggal pembuatan soal:
 
 <blueprint_referensi>
@@ -1581,43 +1582,42 @@ ${buildPrompt2(d)}`;
     }
 }
 
+// PERBAIKAN UTAMA: LOGIKA PEMANGGILAN API 
 async function callGeminiAPI(model, key, prompt) {
     let activeKey = key;
     const sysPref = localStorage.getItem(SYSTEM_KEY_PREF) || 'key1';
-    const isMember = currentUser && (currentUser.level.toLowerCase().includes('sahabat') || currentUser.level.toLowerCase().includes('member') || currentUser.level.toLowerCase() === 'admin');
+    
+    // Deteksi apakah user adalah member
+    let isMember = false;
+    if (currentUser && currentUser.level) {
+        const lvl = currentUser.level.toLowerCase();
+        isMember = lvl.includes('sahabat') || lvl.includes('member') || lvl === 'admin';
+    }
 
-    // Jika tidak ada custom key, cek apakah user member dan memilih key4/key5 (jalur frontend)
+    // Jika tidak ada key custom, cek apakah user pakai key4/key5 (Jalur Frontend)
     if ((!activeKey || activeKey.trim() === '') && isMember) {
         if (sysPref === 'key4' && FRONTEND_AQ_KEY_4) activeKey = FRONTEND_AQ_KEY_4;
         if (sysPref === 'key5' && FRONTEND_AQ_KEY_5) activeKey = FRONTEND_AQ_KEY_5;
     }
 
     if (activeKey && activeKey.trim() !== '') {
-        // JALUR 1: Eksekusi langsung di browser (Custom Key ATAU Frontend AQ Key 4/5)
-        let url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
-        let headers = { 'Content-Type': 'application/json' };
-
-        // Penanganan khusus untuk token format AQ (harus pakai header Authorization Bearer)
-        if (activeKey.startsWith('AQ.')) {
-            headers['Authorization'] = `Bearer ${activeKey}`;
-        } else {
-            url += `?key=${activeKey}`;
-        }
-
+        // JALUR 1: Eksekusi dari Browser (Untuk API Custom AIza / AQ / Key 4 / Key 5)
+        // Kita KEMBALIKAN logika default Google: pass token lewat parameter ?key=
+        // karena melempar API Key via header Bearer akan ditolak jika tidak tervalidasi sebagai OAuth2 Google Cloud
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${activeKey}`;
+        
         const res = await fetch(url, {
-            method: 'POST',
-            headers: headers,
+            method: 'POST', 
+            headers: {'Content-Type':'application/json'},
             body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
         });
-
         const data = await res.json();
         if(!res.ok) throw new Error(data.error?.message || 'Token/API Key tidak valid atau expired.');
         return data.candidates[0].content.parts[0].text;
     } else {
-        // JALUR 2: Eksekusi melalui Backend (Key 1, Key 2, Key 3)
+        // JALUR 2: Eksekusi dari Backend GAS (Untuk Key 1, 2, 3)
         const res = await callGASBackend('generate_gemini', { prompt, model, systemKeyPref: sysPref, userLevel: currentUser?.level || 'Guest' });
         if(res.status !== 'success') throw new Error(res.message);
-        
         return res.text; 
     }
 }
@@ -1947,7 +1947,7 @@ function handleLogout() {
 }
 
 function updateApiLevelInfo() {
-    const isMember = currentUser && (currentUser.level.toLowerCase().includes('sahabat') || currentUser.level.toLowerCase().includes('member') || currentUser.level === 'Admin');
+    const isMember = currentUser && (currentUser.level === 'Sahabat Maharati' || currentUser.level === 'Admin');
     const txt = document.getElementById('api-level-info-text');
     if (txt) txt.textContent = isMember ? 'Akun Sahabat Maharati Aktif (Semua Jalur Terbuka)' : 'Mode Tamu (Gunakan API Key 1 atau Input Pribadi)';
     
@@ -1977,8 +1977,7 @@ function updateApiLevelInfo() {
 }
 
 function handleMemberKeyClick(lbl) {
-    const isMember = currentUser && (currentUser.level.toLowerCase().includes('sahabat') || currentUser.level.toLowerCase().includes('member') || currentUser.level === 'Admin');
-    if (!isMember) { showDonorGateModal(); return; }
+    if (!currentUser || currentUser.level === 'Guest') { showDonorGateModal(); return; }
     const radio = lbl.querySelector('input');
     if(radio) { radio.checked = true; onApiChoiceChange(radio.value); }
 }
