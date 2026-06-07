@@ -193,7 +193,7 @@
                         <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-20 translate-x-20"></div>
                         <div class="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-16 -translate-x-12"></div>
                         <div class="relative z-10">
-                            <span class="inline-block bg-white/20 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border border-white/30 mb-4">Asesmen Maharati AI v2.5 • Kurikulum Merdeka</span>
+                            <span class="inline-block bg-white/20 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border border-white/30 mb-4">Asesmen Maharati AI v5.5 • Kurikulum Merdeka</span>
                             <h2 class="text-3xl font-extrabold mb-3 leading-tight">Asesmen Sumatif Berkualitas,<br>Tepat Sasaran & Tanpa Ribet 🎯</h2>
                             <p class="text-blue-100 mb-3 max-w-xl text-sm leading-relaxed">
                                 Guru yang baik bukan hanya mengajar — tetapi juga mengukur dengan tepat.<br>
@@ -1602,18 +1602,38 @@ async function callGeminiAPI(model, key, prompt) {
 
     if (activeKey && activeKey.trim() !== '') {
         // JALUR 1: Eksekusi dari Browser (Untuk API Custom AIza / AQ / Key 4 / Key 5)
-        // Kita KEMBALIKAN logika default Google: pass token lewat parameter ?key=
-        // karena melempar API Key via header Bearer akan ditolak jika tidak tervalidasi sebagai OAuth2 Google Cloud
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${activeKey}`;
+        // DIBUAT STRICT: Hanya memanggil model yang dipilih user, tanpa fallback.
+        let url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+        let headers = { 'Content-Type': 'application/json' };
+
+        // Penanganan khusus untuk token format AQ (harus pakai header Authorization Bearer)
+        if (activeKey.startsWith('AQ.')) {
+            headers['Authorization'] = `Bearer ${activeKey}`;
+        } else {
+            url += `?key=${activeKey}`;
+        }
+
+        try {
+            const res = await fetch(url, {
+                method: 'POST', 
+                headers: headers,
+                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+            });
+            
+            const data = await res.json();
+            
+            if (res.ok && data.candidates && data.candidates.length > 0) {
+                return data.candidates[0].content.parts[0].text;
+            } else {
+                // Langsung lempar error apa adanya dari Google
+                const errorMsg = data.error?.message || `HTTP Error ${res.status}`;
+                throw new Error(errorMsg);
+            }
+        } catch (err) {
+            // Lempar error ke UI agar user tahu persis apa yang terjadi
+            throw err;
+        }
         
-        const res = await fetch(url, {
-            method: 'POST', 
-            headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-        });
-        const data = await res.json();
-        if(!res.ok) throw new Error(data.error?.message || 'Token/API Key tidak valid atau expired.');
-        return data.candidates[0].content.parts[0].text;
     } else {
         // JALUR 2: Eksekusi dari Backend GAS (Untuk Key 1, 2, 3)
         const res = await callGASBackend('generate_gemini', { prompt, model, systemKeyPref: sysPref, userLevel: currentUser?.level || 'Guest' });
