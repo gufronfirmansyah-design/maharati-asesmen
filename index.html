@@ -193,7 +193,7 @@
                         <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-20 translate-x-20"></div>
                         <div class="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-16 -translate-x-12"></div>
                         <div class="relative z-10">
-                            <span class="inline-block bg-white/20 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border border-white/30 mb-4">Asesmen Maharati AI v3.5 • Kurikulum Merdeka</span>
+                            <span class="inline-block bg-white/20 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border border-white/30 mb-4">Asesmen Maharati AI v7.5 • Kurikulum Merdeka</span>
                             <h2 class="text-3xl font-extrabold mb-3 leading-tight">Asesmen Sumatif Berkualitas,<br>Tepat Sasaran & Tanpa Ribet 🎯</h2>
                             <p class="text-blue-100 mb-3 max-w-xl text-sm leading-relaxed">
                                 Guru yang baik bukan hanya mengajar — tetapi juga mengukur dengan tepat.<br>
@@ -802,6 +802,14 @@ const FORM_DRAFT_KEY  = 'maharati_form_draft';
 // === API KEY FRONTEND (JALUR BROWSER LANGSUNG UNTUK MEMBER) ===
 const FRONTEND_AQ_KEY_4 = ""; // Isi dengan token khusus Anda (Bisa AQ atau AIza) jika ada
 const FRONTEND_AQ_KEY_5 = ""; // Isi dengan token khusus Anda jika ada
+
+// Helper: ambil API key sesuai pilihan user di radio button
+function getSelectedApiKey() {
+    const pref = localStorage.getItem(SYSTEM_KEY_PREF) || 'key1';
+    if (pref === 'aizaSyCustom') return localStorage.getItem('gemini_api_key') || '';
+    if (pref === 'aqToken')      return localStorage.getItem('aq_token') || '';
+    return ''; // key1/2/3/4/5 → ditangani callGeminiAPI via backend atau FRONTEND_KEY
+}
 
 // STATE
 let currentUser = null;
@@ -1508,8 +1516,8 @@ async function generateWizardStep1() {
     showLoading(true, 'Menyusun Kisi-kisi Asesmen', 'AI sedang menganalisis kurikulum. Mohon tunggu...');
     runLoadingProgress(20000); 
     
-    // Perbaikan: Ambil token yang tersimpan
-    const apiKey = localStorage.getItem('aq_token') || localStorage.getItem('gemini_api_key') || '';
+    // Ambil key sesuai pilihan user di pengaturan
+    const apiKey = getSelectedApiKey();
     const selectedModel = document.getElementById('f-model').value || 'gemini-2.5-flash';
     
     try {
@@ -1560,7 +1568,7 @@ ${buildPrompt2(d)}`;
     showLoading(true, 'Menulis Soal dan Pembahasan', 'AI sedang merangkai butir soal berdasarkan blueprint...');
     runLoadingProgress(35000);
     
-    const apiKey = localStorage.getItem('aq_token') || localStorage.getItem('gemini_api_key') || '';
+    const apiKey = getSelectedApiKey();
     const selectedModel = document.getElementById('f-model').value || 'gemini-2.5-flash';
 
     try {
@@ -1583,10 +1591,10 @@ ${buildPrompt2(d)}`;
 }
 
 // PERBAIKAN UTAMA: LOGIKA PEMANGGILAN API 
-async function callGeminiAPI(model, key, prompt) {
-    let activeKey = key;
+async function callGeminiAPI(model, _key, prompt) {
+    // _key diabaikan — key ditentukan dari pilihan user (sysPref), bukan dari pemanggil
     const sysPref = localStorage.getItem(SYSTEM_KEY_PREF) || 'key1';
-    
+
     // Deteksi apakah user adalah member
     let isMember = false;
     if (currentUser && currentUser.level) {
@@ -1594,11 +1602,18 @@ async function callGeminiAPI(model, key, prompt) {
         isMember = lvl.includes('sahabat') || lvl.includes('member') || lvl === 'admin';
     }
 
-    // Jika tidak ada key custom, cek apakah user pakai key4/key5 (Jalur Frontend)
-    if ((!activeKey || activeKey.trim() === '') && isMember) {
-        if (sysPref === 'key4' && FRONTEND_AQ_KEY_4) activeKey = FRONTEND_AQ_KEY_4;
-        if (sysPref === 'key5' && FRONTEND_AQ_KEY_5) activeKey = FRONTEND_AQ_KEY_5;
+    // Tentukan activeKey berdasarkan pilihan user secara eksplisit
+    let activeKey = '';
+    if (sysPref === 'aizaSyCustom') {
+        activeKey = localStorage.getItem('gemini_api_key') || '';
+    } else if (sysPref === 'aqToken') {
+        activeKey = localStorage.getItem('aq_token') || '';
+    } else if (sysPref === 'key4' && isMember && FRONTEND_AQ_KEY_4) {
+        activeKey = FRONTEND_AQ_KEY_4;
+    } else if (sysPref === 'key5' && isMember && FRONTEND_AQ_KEY_5) {
+        activeKey = FRONTEND_AQ_KEY_5;
     }
+    // key1/key2/key3 → activeKey tetap '' → masuk Jalur 2 (Backend GAS)
 
     if (activeKey && activeKey.trim() !== '') {
         // JALUR 1: Eksekusi dari Browser (Untuk API Custom AIza / AQ / Key 4 / Key 5)
